@@ -1,0 +1,8 @@
+# Needing added
+
+- [ ] coroutine support?
+
+# Fixes / improvements
+
+- [ ] generalize regex and others more for wchar etc
+- [ ] more complete testing

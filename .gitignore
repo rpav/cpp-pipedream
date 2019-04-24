@@ -1,0 +1,6 @@
+*~
+build/
+build.*/
+CMakeLists.txt.user*
+.ccls-cache/
+compile_commands.json
