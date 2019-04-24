@@ -1,7 +1,1 @@
-set(PIPEDREAM_VERSION 0.1.0)
-
-@PACKAGE_INIT@
-
-set_and_check(PIPEDREAM_INCLUDE_DIR "@PACKAGE_INSTALL_INCLUDE_DIR@")
-
-check_required_components(pipedream)
+include("${CMAKE_CURRENT_LIST_DIR}/pipedreamTargets.cmake")
