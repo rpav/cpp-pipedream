@@ -5,9 +5,7 @@
     "author": "rpav",
     "license": "CC-BY-SA-4.0",
     "dependencies": {
-        "markdown-it-decorate": "^1.2.2"
-    },
-    "devDependencies": {
+        "markdown-it-decorate": "^1.2.2",
         "markdown-it-vuepress-code-snippet-enhanced": "^1.0.1"
     }
 }

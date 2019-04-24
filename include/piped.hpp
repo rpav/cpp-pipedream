@@ -14,5 +14,4 @@
 #include <piped/container.hpp>
 #include <piped/zip.hpp>
 #include <piped/match.hpp>
-#include <piped/lambda.hpp>
 #include <piped/util.hpp>
