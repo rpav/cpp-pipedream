@@ -68,7 +68,7 @@ auto v = from_to(1,4)
 @endcode
  */
 template<typename F>
-map_<F> map(const F& f)
+detail::map_<F> map(const F& f)
 {
     return {f};
 }
@@ -157,7 +157,7 @@ auto v = "a,b,c" | split(",") | map_to<std::string> | collect<std::vector>
 @endcode
   */
 template<typename T>
-constexpr map_to_<T> map_to{};
+constexpr detail::map_to_<T> map_to{};
 
 namespace detail {
 template<typename G>
@@ -221,7 +221,7 @@ auto v = s
 // Produce ["X:", "Y:", "Z:"] as a `vector<string_view>`
 @endcode
  */
-inline map_nth_ map_nth(size_t nth)
+inline detail::map_nth_ map_nth(size_t nth)
 {
     return {nth};
 }

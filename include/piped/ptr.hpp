@@ -8,7 +8,7 @@
 
 #include <piped/config.hpp>
 
-namespace piped {
+namespace piped::extra {
 
 /**
  @brief A transparent pointer wrapper. This functions as an `option_type`, i.e.
@@ -148,4 +148,4 @@ public:
     }
 };
 
-} // namespace piped
+} // namespace piped::extra

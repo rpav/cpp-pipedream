@@ -227,7 +227,7 @@ struct filter_ {
      | collect<std::vector>;
 @endcode
  */
-constexpr each_ each;
+constexpr detail::each_ each;
 
 /**
    @brief Generate a numeric sequence starting at `n`
@@ -238,7 +238,7 @@ constexpr each_ each;
    represent.
  */
 template<typename T>
-inline generator_seq<T> from(T n, T by = T{1})
+inline detail::generator_seq<T> from(T n, T by = T{1})
 {
     T last = by > 0 ? std::numeric_limits<T>::max() : std::numeric_limits<T>::lowest();
     return {n, last, by};
@@ -255,7 +255,7 @@ inline generator_seq<T> from(T n, T by = T{1})
   @param by Increment, defaults to `T{1}`
  */
 template<typename T>
-inline generator_seq<T> from_to(T first, T limit, T by = T{1})
+inline detail::generator_seq<T> from_to(T first, T limit, T by = T{1})
 {
     return {first, limit, by};
 }
@@ -271,7 +271,7 @@ auto v = from(5) | take(3) | collect<std::vector>;
 // Normally just use from_to() here, though.
 @endcode
  */
-inline take_ take(size_t count)
+inline detail::take_ take(size_t count)
 {
     return {count};
 }
@@ -288,7 +288,7 @@ auto v = from_to(5,10) | skip(1) | collect<std::vector>;
    tell the correct value of `empty()`.  It is required that if `empty()` returns
    false, `next()` return a non-empty value.
  */
-inline skip_ skip(size_t n)
+inline detail::skip_ skip(size_t n)
 {
     return {n};
 }
@@ -310,7 +310,7 @@ auto v2 = from_to(0.0f,-10.0f)    | collect<std::vector>;   // std::vector<float
    inserted by `try_emplace()`.  See `zip` for an example.
  */
 template<template<typename...> typename T, typename... Ts>
-constexpr collect_<T, Ts...> collect{};
+constexpr detail::collect_<T, Ts...> collect{};
 
 /**
    @brief Generate values from input when `f(v)` returns true.
@@ -327,7 +327,7 @@ auto v = from_to(0,10)
 @endcode
  */
 template<typename F>
-filter_<F> filter(const F& f)
+detail::filter_<F> filter(const F& f)
 {
     return {f};
 }
@@ -394,7 +394,7 @@ auto i = v | each | reduce(std::plus<>(), 1);
 
  */
 template<typename F, typename T>
-inline reduce_init_<F, T> reduce(F f, T initial)
+inline detail::reduce_init_<F, T> reduce(F f, T initial)
 {
     return {initial, f};
 }
@@ -413,7 +413,7 @@ auto i = v | each | reduce(std::plus<>());
   where `r` is a default-initialized value.
  */
 template<typename F>
-inline reduce_<F> reduce(F f)
+inline detail::reduce_<F> reduce(F f)
 {
     return {f};
 }
@@ -447,7 +447,7 @@ auto v = 1 | call([](auto x) { return x + 1; });
   @ingroup misc
  */
 template<typename F>
-call_<F> call(F&& f)
+detail::call_<F> call(F&& f)
 {
     return {f};
 }

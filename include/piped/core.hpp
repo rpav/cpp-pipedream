@@ -62,12 +62,26 @@
 namespace piped {
 
 /// Internal classes
-namespace detail {}
+namespace detail {
 
-/// User-defined litearls
+template<typename T>
+struct exists : std::true_type {};
+
+template<typename T>
+typename std::add_lvalue_reference<T>::type l_declval();
+
+struct has_process {
+    template<typename I, typename O>
+    static auto sfinae(char) -> exists<decltype(std::declval<O>().process(l_declval<I>()))>;
+
+    template<typename, typename>
+    static auto sfinae(int) -> std::false_type;
+};
+
+}
+
+/// User-defined literals
 namespace literals {}
-
-using namespace detail;
 
 /**
   @brief The O-behavior of `I | O`. By default, `o.process(i)`, or `o(i)`.
@@ -75,6 +89,9 @@ using namespace detail;
   */
 template<typename O>
 struct adl_piped_out {
+    template<typename I>
+    static constexpr bool is_piped = decltype(detail::has_process::sfinae<I, O>('\0'))::value;
+
     template<typename I, typename Oo = O>
     constexpr static inline auto process(I&& i, Oo&& o) -> decltype(auto)
     {
@@ -88,9 +105,8 @@ struct adl_piped_out {
  */
 template<typename I>
 struct adl_piped {
-    template<typename O>
-    using is_piped = decltype(
-        adl_piped_out<std::decay_t<O>>::process(std::declval<I>(), std::declval<O>()));
+    template<typename O, typename Ii = I>
+    static constexpr bool is_piped = adl_piped_out<std::decay_t<O>>::template is_piped<std::decay_t<I>&&>;
 
     template<typename O, typename Ii = I, typename Oo = std::decay_t<O>>
     constexpr static inline auto process(Ii&& i, O&& o) -> decltype(auto)
@@ -106,6 +122,9 @@ struct adl_piped {
 template<typename A>
 struct adl_piped_assign {
     template<typename C>
+    static constexpr bool is_piped = decltype(detail::has_process::sfinae<A,C>('\0'))::value;
+
+    template<typename C>
     static inline auto& process(A& assigned, C&& chain)
     {
         return assigned = chain.process(assigned);
@@ -120,8 +139,8 @@ struct empty {};
 /// Emtpy value for `ptr<T>`
 /// @ingroup type_util
 template<typename T>
-struct empty<ptr<T>> {
-    static constexpr ptr<T> value{};
+struct empty<extra::ptr<T>> {
+    static constexpr extra::ptr<T> value{};
 };
 
 /// Empty value for `std::optional<T>`
@@ -147,13 +166,21 @@ struct iterator_for {
 
 namespace operators {
 
-template<typename I, typename O, typename F = piped::adl_piped<std::decay_t<I>>>
+template<
+    typename I,
+    typename O,
+    typename F = piped::adl_piped<std::decay_t<I>>,
+    typename B = std::enable_if_t<piped::adl_piped<std::decay_t<I>>::template is_piped<std::decay_t<O>>>>
 constexpr inline auto operator|(I&& input, O&& output) -> decltype(auto)
 {
     return F::process(std::forward<I>(input), std::forward<O>(output));
 }
 
-template<typename A, typename C, typename F = piped::adl_piped_assign<std::decay_t<A>>>
+template<
+    typename A,
+    typename C,
+    typename F = piped::adl_piped_assign<std::decay_t<A>>,
+    typename   = std::enable_if_t<piped::adl_piped_assign<A>::template is_piped<C>>>
 constexpr inline auto operator|=(A&& assigned, C&& chain) -> decltype(auto)
 {
     return F::process(std::forward<A>(assigned), std::forward<C>(chain));

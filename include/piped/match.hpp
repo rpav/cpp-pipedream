@@ -47,7 +47,7 @@ struct adl_match {
 
 template<typename M, typename... Ts>
 struct adl_match<M, std::variant<Ts...>> {
-    static constexpr bool can_match = find<M, Ts...>::value;
+    static constexpr bool can_match = detail::find<M, Ts...>::value;
 
     template<typename S>
     inline static auto* does_match(S* v)
@@ -72,7 +72,7 @@ struct match_helper {
     inline S* process(S* v) const
     {
         if constexpr(adl_match<T, S>::can_match) {
-            ptr<T> actual;
+            extra::ptr<T> actual;
 
             if(v && (actual = adl_match<T, S>::does_match(v))) {
                 f(*actual);
@@ -161,7 +161,7 @@ void F(T v) {
  */
 
 template<typename T>
-constexpr match_<T> match{};
+constexpr detail::match_<T> match{};
 
 /**
   @brief Match anything.
@@ -169,5 +169,5 @@ constexpr match_<T> match{};
 
   @ingroup match
   */
-constexpr match_else_ match_else{};
+constexpr detail::match_else_ match_else{};
 } // namespace piped

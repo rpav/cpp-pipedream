@@ -47,7 +47,7 @@ v | erase_if([](auto v) { return v > 1 || v < 9; });
 @endcode
  */
 template<typename F>
-inline erase_if_<F> erase_if(const F& f)
+inline detail::erase_if_<F> erase_if(const F& f)
 {
     return {f};
 }
@@ -84,7 +84,7 @@ v | sort;                      // => [-22, 1, 1, 3, 5, 7, 10]
 v | sort(std::greater<>());    // => [10, 7, 5, 3, 1, 1, -22]
 @endcode
  */
-constexpr sort_<decltype(std::less<>())> sort{std::less<>()};
+constexpr detail::sort_<decltype(std::less<>())> sort{std::less<>()};
 
 
 namespace detail {
@@ -117,7 +117,7 @@ v | sort | unique;             // => [-22, 1, 3, 5, 7, 10]
 
   This uses `std::erase` and `std::unique`.
  */
-constexpr unique_<decltype(std::equal_to<>())> unique{std::equal_to<>()};
+constexpr detail::unique_<decltype(std::equal_to<>())> unique{std::equal_to<>()};
 
 
 } // namespace piped

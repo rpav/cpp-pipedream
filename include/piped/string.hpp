@@ -79,7 +79,7 @@ auto v = "a,b,c" | split(",") | collect<std::vector>;
  */
 inline auto split(std::string_view split_string)
 {
-    return string_split_{split_string};
+    return detail::string_split_{split_string};
 }
 
 namespace detail {
@@ -129,6 +129,6 @@ s == "a:b:c"; // => true
 
    @ingroup string
 */
-constexpr join_ join;
+constexpr detail::join_ join;
 
 } // namespace piped

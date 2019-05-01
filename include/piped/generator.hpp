@@ -118,7 +118,7 @@ iterator_from_generator(T)->iterator_from_generator<T>;
 template<typename CRTP>
 struct generator {
     using actual_generator = CRTP;
-    using iterator         = iterator_from_generator<actual_generator>;
+    using iterator         = detail::iterator_from_generator<actual_generator>;
     using end_iterator     = actual_generator&;
 
     /// This returns an iterator suitable for range-based-for-like iteration.
@@ -153,14 +153,14 @@ public:
     using child_end_iterator = std::decay_t<E_Iter>;
 
     using value_type  = std::remove_reference_t<decltype(*std::declval<child_iterator>())>;
-    using option_type = ptr<value_type>;
+    using option_type = extra::ptr<value_type>;
 
 private:
     child_iterator     _cur;
     child_end_iterator _end;
 
 public:
-    inline ptr<value_type> next()
+    inline extra::ptr<value_type> next()
     {
         if(empty()) return nullptr;
 

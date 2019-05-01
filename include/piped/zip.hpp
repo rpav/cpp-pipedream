@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <tuple>
 #include <utility>
 
 #include <piped/core.hpp>
@@ -78,7 +79,7 @@ auto m = zip("a,b,c" | split(","), from(1)) | collect<std::map>;
 template<typename... Ts>
 auto zip(Ts&&... vs)
 {
-    return generator_zip<Ts...>(std::forward<Ts>(vs)...);
+    return detail::generator_zip<Ts...>(std::forward<Ts>(vs)...);
 }
 
 } // namespace piped

@@ -41,7 +41,7 @@ namespace detail {
 
 struct replace_ {
     std::regex      re;
-    ptr<const char> fmt;
+    extra::ptr<const char> fmt;
 
     std::string process(const std::string& s) const
     {
@@ -69,7 +69,7 @@ s == "xbc"; // => true
   @param fmt `const char*` convertible replacement format, as per `std::regex_replace`
   @return A new string with replacement done.
  */
-inline replace_ replace(std::regex re, ptr<const char> fmt)
+inline detail::replace_ replace(std::regex re, extra::ptr<const char> fmt)
 {
     return {std::move(re), fmt};
 }
@@ -81,7 +81,7 @@ struct generator_regex_matches : public generator<generator_regex_matches<String
 public:
     using input_type  = String;
     using value_type  = std::match_results<const char*>; // fixme: non-char-based strings
-    using option_type = ptr<value_type>;
+    using option_type = extra::ptr<value_type>;
 
 private:
     std::regex _re;
@@ -155,7 +155,7 @@ auto v = "X:Y:Z:"
 // the original string.
 @endcode
  */
-inline each_match_ each_match(std::regex re)
+inline detail::each_match_ each_match(std::regex re)
 {
     return {std::move(re)};
 }
@@ -235,7 +235,7 @@ struct regex_split_ {
   */
 inline auto split(std::regex re)
 {
-    return regex_split_{std::move(re)};
+    return detail::regex_split_{std::move(re)};
 }
 
 } // namespace piped
