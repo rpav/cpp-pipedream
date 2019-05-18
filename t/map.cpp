@@ -5,7 +5,6 @@
 #include "catch.hpp"
 
 using namespace piped;
-using namespace piped::operators;
 
 TEST_CASE("piped_map_basic", "[piped][map]")
 {

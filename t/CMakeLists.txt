@@ -7,7 +7,8 @@ add_executable(pipedream_core_tests
   map.cpp
 )
 
-target_link_libraries(pipedream_core_tests
-    PRIVATE pipedream)
+target_link_libraries(pipedream_core_tests PRIVATE
+  pipedream
+  )
 
 add_test(NAME test_pipedream_core COMMAND pipedream_core_tests)

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 
 #include "catch.hpp"
@@ -136,4 +137,15 @@ TEST_CASE("pipe_collect_map_basic", "[piped][collect][std_map]") {
     REQUIRE(m.find("c") != m.end());
 
     REQUIRE(m.find("b")->second == 2);
+}
+
+TEST_CASE("pipe_difference_basic", "[piped][difference][std_vector]") {
+    auto v1 = from_to(0,3) | collect<std::vector>;
+    auto v2 = from_to(1,4) | collect<std::vector>;
+
+    auto rv = v1 | difference(v2);
+
+    REQUIRE(rv.size() == 2);
+    REQUIRE(rv[0] == 0);
+    REQUIRE(rv[1] == 3);
 }
