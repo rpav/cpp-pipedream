@@ -149,3 +149,19 @@ TEST_CASE("pipe_difference_basic", "[piped][difference][std_vector]") {
     REQUIRE(rv[0] == 0);
     REQUIRE(rv[1] == 3);
 }
+
+TEST_CASE("pipe_append_basic", "[piped][append][std_vector]") {
+    auto v1 = from_to(0,2) | collect<std::vector>;
+    auto v2 = from_to(2,4) | collect<std::vector>;
+
+    REQUIRE(v1.size() == 2);
+    REQUIRE(v2.size() == 2);
+
+    v1 | append(v2);
+
+    REQUIRE(v1.size() == 4);
+    REQUIRE(v1[0] == 0);
+    REQUIRE(v1[1] == 1);
+    REQUIRE(v1[2] == 2);
+    REQUIRE(v1[3] == 3);
+}

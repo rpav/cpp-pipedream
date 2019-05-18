@@ -151,4 +151,28 @@ inline auto difference(const C& c)
     return detail::difference_{c};
 };
 
+namespace detail {
+template<typename C>
+struct append_ {
+    const C& other;
+
+    append_(const C& o) : other(o) { }
+
+    inline C& process(C& c) {
+        c.insert(c.end(), other.begin(), other.end());
+        return c;
+    }
+};
+}
+
+/**
+   @brief Modifying operation that appends `v` to input.
+
+   @ingroup container
+ */
+template<typename C>
+inline auto append(const C& v) {
+    return detail::append_(v);
+}
+
 } // namespace piped
