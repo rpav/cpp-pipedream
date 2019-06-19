@@ -31,4 +31,6 @@ if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
-SetupPost()
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+  SetupPost()
+endif()
