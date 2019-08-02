@@ -133,7 +133,7 @@ struct difference_ {
     inline C process(const C& c) const
     {
         C rc;
-        std::set_symmetric_difference(
+        std::set_difference(
             c.begin(), c.end(), diffset.begin(), diffset.end(), std::inserter(rc, rc.begin()));
         return rc;
     }
@@ -141,7 +141,7 @@ struct difference_ {
 } // namespace detail
 
 /**
-   @brief Return the `std::set_symmetric_difference` between the input and `c`
+   @brief Return the `std::set_difference` between the input and `c`
 
    @ingroup container
  */
