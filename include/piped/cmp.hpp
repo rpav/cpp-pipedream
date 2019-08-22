@@ -11,20 +11,20 @@ namespace piped {
 
 namespace detail {
 
-template<typename...Ts>
+template<typename... Ts>
 struct in_ {
     std::tuple<Ts...> vs;
 
-    in_(Ts&&...vs) : vs{vs...} {}
+    in_(Ts&&... vs) : vs{vs...} {}
 
     template<typename T>
-    inline bool process(const T& v) {
-        return std::apply([&](auto&&... vs) -> bool {
-            return (... || (v == vs));
-        }, vs);
+    inline bool process(const T& v)
+    {
+        return std::apply([&](auto&&... vs) -> bool { return (... || (v == vs)); }, vs);
     }
 };
-}
+
+} // namespace detail
 
 /**
    @brief Test whether the input is in the specified list of values.
@@ -40,9 +40,10 @@ if(x | in(1, 2, 3)) {
 }
 @endcode
  */
-template<typename...Ts>
-detail::in_<Ts...> in(Ts&&...vs) {
-    return {std::forward<Ts>(vs)...};
+template<typename... Ts>
+auto in(Ts&&... vs)
+{
+    return detail::in_<Ts...>{std::forward<Ts>(vs)...};
 }
 
-}
+} // namespace piped

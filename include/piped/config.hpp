@@ -10,7 +10,7 @@ namespace piped {
 /// Configuration value namespace
 namespace config {
 
-/// Values based on #defines or -D
+/// Values based on `#define` or -D
 namespace defined{};
 
 #ifndef NDEBUG

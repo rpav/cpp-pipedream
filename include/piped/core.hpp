@@ -16,7 +16,7 @@
 
 /**
    @defgroup comparison Comparison operations
-   @brief
+   @brief Compare things in various ways.
 */
 
 /**
