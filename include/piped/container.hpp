@@ -123,22 +123,6 @@ v | sort | unique;             // => [-22, 1, 3, 5, 7, 10]
  */
 constexpr detail::unique_<decltype(std::equal_to<>())> unique{std::equal_to<>()};
 
-namespace detail {
-template<typename C>
-struct difference_ {
-    const C& diffset;
-
-    difference_(const C& ds) : diffset{ds} { }
-
-    inline C process(const C& c) const
-    {
-        C rc;
-        std::set_difference(
-            c.begin(), c.end(), diffset.begin(), diffset.end(), std::inserter(rc, rc.begin()));
-        return rc;
-    }
-};
-} // namespace detail
 
 /**
    @brief Return the `std::set_difference` between the input and `c`
@@ -148,22 +132,27 @@ struct difference_ {
 template<typename C>
 inline auto difference(const C& c)
 {
-    return detail::difference_{c};
+    return simple_operation([&](const C& d) {
+        C rc;
+        std::set_difference(d.begin(), d.end(), c.begin(), c.end(), std::inserter(rc, rc.begin()));
+        return rc;
+    });
 };
 
-namespace detail {
+/**
+   @brief Return the `std::set_symmetric_difference` between the input and `c`
+
+   @ingroup container
+ */
 template<typename C>
-struct append_ {
-    const C& other;
-
-    append_(const C& o) : other(o) { }
-
-    inline C& process(C& c) {
-        c.insert(c.end(), other.begin(), other.end());
-        return c;
-    }
+inline auto symmetric_difference(const C& c)
+{
+    return simple_operation([&](const C& d) {
+        C rc;
+        std::set_symmetric_difference(d.begin(), d.end(), c.begin(), c.end(), std::inserter(rc, rc.begin()));
+        return rc;
+    });
 };
-}
 
 /**
    @brief Modifying operation that appends `v` to input.
@@ -171,8 +160,11 @@ struct append_ {
    @ingroup container
  */
 template<typename C>
-inline auto append(const C& v) {
-    return detail::append_(v);
+inline auto append(const C& other) {
+    return simple_operation([&](C& c) -> C& {
+        c.insert(c.end(), other.begin(), other.end());
+        return c;
+    });
 }
 
 } // namespace piped

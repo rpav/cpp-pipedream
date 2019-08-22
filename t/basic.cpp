@@ -145,9 +145,8 @@ TEST_CASE("pipe_difference_basic", "[piped][difference][std_vector]") {
 
     auto rv = v1 | difference(v2);
 
-    REQUIRE(rv.size() == 2);
+    REQUIRE(rv.size() == 1);
     REQUIRE(rv[0] == 0);
-    REQUIRE(rv[1] == 3);
 }
 
 TEST_CASE("pipe_append_basic", "[piped][append][std_vector]") {
@@ -164,4 +163,11 @@ TEST_CASE("pipe_append_basic", "[piped][append][std_vector]") {
     REQUIRE(v1[1] == 1);
     REQUIRE(v1[2] == 2);
     REQUIRE(v1[3] == 3);
+}
+
+TEST_CASE("pipe_comparison", "[piped][comparison]") {
+    int x = 1;
+
+    REQUIRE((x | in(3,2,1)));
+    REQUIRE(!(x | in(2,3,4)));
 }

@@ -15,6 +15,11 @@
  */
 
 /**
+   @defgroup comparison Comparison operations
+   @brief
+*/
+
+/**
    @defgroup generator Generator-related operations
    @brief Lazy and compositional value processing.
  */
@@ -78,7 +83,7 @@ struct has_process {
     static auto sfinae(int) -> std::false_type;
 };
 
-}
+} // namespace detail
 
 /// User-defined literals
 namespace literals {}
@@ -106,7 +111,8 @@ struct adl_piped_out {
 template<typename I>
 struct adl_piped {
     template<typename O, typename Ii = I>
-    static constexpr bool is_piped = adl_piped_out<std::decay_t<O>>::template is_piped<std::decay_t<I>&&>;
+    static constexpr bool is_piped =
+        adl_piped_out<std::decay_t<O>>::template is_piped<std::decay_t<I>&&>;
 
     template<typename O, typename Ii = I, typename Oo = std::decay_t<O>>
     constexpr static inline auto process(Ii&& i, O&& o) -> decltype(auto)
@@ -122,12 +128,34 @@ struct adl_piped {
 template<typename A>
 struct adl_piped_assign {
     template<typename C>
-    static constexpr bool is_piped = decltype(detail::has_process::sfinae<A,C>('\0'))::value;
+    static constexpr bool is_piped = decltype(detail::has_process::sfinae<A, C>('\0'))::value;
 
     template<typename C>
     static inline auto& process(A& assigned, C&& chain)
     {
         return assigned = chain.process(assigned);
+    }
+};
+
+/**
+   @brief A simple way to implement an operation by specifying a function for `process()`
+   @ingroup dev
+ */
+template<typename F>
+struct simple_operation {
+    F f;
+
+    simple_operation(const F&) : f(f) {}
+    simple_operation(F&& f) : f(f) {}
+
+    template<typename T>
+    inline auto process(const T& i) const -> decltype(auto) {
+        return f(i);
+    }
+
+    template<typename T>
+    inline auto process(T& i) const -> decltype(auto) {
+        return f(i);
     }
 };
 

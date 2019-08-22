@@ -7,6 +7,7 @@
  */
 
 #include <piped/core.hpp>
+#include <piped/cmp.hpp>
 #include <piped/generator.hpp>
 #include <piped/map.hpp>
 #include <piped/regex.hpp>
