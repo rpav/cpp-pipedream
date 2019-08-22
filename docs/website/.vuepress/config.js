@@ -27,6 +27,7 @@ module.exports = {
                 title: 'API',
                 sidebarDepth: 1,
                 children: [
+                    [ 'api/group__comparison', 'Comparison' ],
                     [ 'api/group__container', 'Container' ],
                     [ 'api/group__dev', 'Developer Utility' ],
                     [ 'api/group__generator', 'Generators' ],
