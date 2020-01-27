@@ -3,6 +3,7 @@ project(cpp-pipedream VERSION 0.1)
 
 set(BUILD_EXAMPLES ON CACHE BOOL "Enable examples")
 set(BUILD_TESTING OFF CACHE BOOL "Enable tests")
+set(INSTALL_PIPEDREAM ON CACHE BOOL "Install and export cpp-pipedream by default")
 set(INSTALL_INCLUDE_DIR "include" CACHE PATH "Headers will be installed here")
 set(INSTALL_LIB_DIR "lib" CACHE PATH "CMake config will fall under this")
 
@@ -16,9 +17,11 @@ target_include_directories(pipedream INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     )
-export(PACKAGE pipedream)
+if(INSTALL_PIPEDREAM)
+  export(PACKAGE pipedream)
+  include(install)
+endif()
 
-include(install)
 include(docs)
 
 if(BUILD_TESTING)
