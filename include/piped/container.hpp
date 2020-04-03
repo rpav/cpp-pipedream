@@ -47,7 +47,7 @@ v | erase_if([](auto v) { return v > 1 || v < 9; });
 @endcode
  */
 template<typename F>
-inline detail::erase_if_<F> erase_if(const F& f)
+inline detail::erase_if_<F> erase_if(const F f)
 {
     return {f};
 }
