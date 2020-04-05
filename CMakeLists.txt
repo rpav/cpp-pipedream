@@ -10,14 +10,6 @@ set(INSTALL_LIB_DIR "lib" CACHE PATH "CMake config will fall under this")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 include(flag_me)
 include(cxx_features)
-include(conan)
-
-conan_cmake_run(
-  CONANFILE ../conanfile.py
-  SETTINGS compiler.libcxx=${CXX_STDLIB})
-
-include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
 
 add_library(pipedream INTERFACE)
 target_include_directories(pipedream INTERFACE
@@ -41,6 +33,4 @@ if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
-if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-  SetupPost()
-endif()
+FlagPostSetup()
