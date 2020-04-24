@@ -53,6 +53,8 @@ function(target_cxx_std TARGET STD)
   set(oneValueArgs EXTENSIONS)
   cmake_parse_arguments(_ "" "${oneValueArgs}" "" ${ARGN})
 
+  get_target_property(type ${TARGET} TYPE)
+
   if(NOT _EXTENSIONS)
     set(_EXTENSIONS OFF)
   endif()
@@ -60,7 +62,11 @@ function(target_cxx_std TARGET STD)
   __cxx_std_process(_std_flag "${STD}" "${_EXTENSIONS}")
   message(STATUS "${TARGET} c++std: ${_std_flag}")
 
-  target_compile_options(${TARGET} PUBLIC ${_std_flag})
+  if(type STREQUAL "INTERFACE_LIBRARY")
+    target_compile_options(${TARGET} INTERFACE ${_std_flag})
+  else()
+    target_compile_options(${TARGET} PUBLIC ${_std_flag})
+  endif()
 endfunction()
 
 

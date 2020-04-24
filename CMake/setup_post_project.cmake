@@ -1,20 +1,17 @@
-# This sets up appropriate warnings and some flag tweaks to build correctly
-#
-# -std= and /std: now handled by cxx_features.cmake
-# -lc++abi should be handled by conan?
-
-# reset these in case of from-cmake config
-
-set(CMAKE_CXX_FLAGS_DEBUG "")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "")
-set(CMAKE_CXX_FLAGS_RELEASE "")
-
 set(gnu_cxx_warnings "-W -Wall -Wextra -Wno-unused-label -Wno-unused-parameter")
 set(gnu_cxx_warn_error "-Werror=return-type -Werror=unused-result")
 
 set(clang_cxx_warnings "-W -Wall -Wextra")
 set(clang_cxx_warn_error "-pedantic-errors -Werror=return-type -Werror=unused-result")
 set(clang_cxx_nowarn "-Wno-unused-parameter -Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wno-unused-label")
+
+set(msvc_debug "/D_DEBUG /MDd /Zi /D_ITERATOR_DEBUG_LEVEL=0 /GL")
+set(msvc_release "/MD /GL")
+set(msvc_rwdi "/DNDEBUG /MDd /Zi /D_ITERATOR_DEBUG_LEVEL=0 /GL")
+
+set(gnu_debug "-O2 -ggdb -fno-omit-frame-pointer")
+set(gnu_rwdi "-O2 -ggdb -fno-omit-frame-pointer -DNDEBUG")
+set(gnu_release "-O3 -DNDEBUG")
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(X64 1)
@@ -44,9 +41,11 @@ else ()
   endif()
 
   function (__target_sanitize TARGET)
-    message(STATUS "${TARGET} sanitizers: ${ENABLE_SANITIZER}")
-    target_compile_options(${TARGET} BEFORE PRIVATE "-fsanitize=${ENABLE_SANITIZER}")
-    target_link_options(${TARGET} BEFORE PRIVATE "-fsanitize=${ENABLE_SANITIZER}")
+    if(ENABLE_SANITIZER)
+      message(STATUS "${TARGET} sanitizers: ${ENABLE_SANITIZER}")
+      target_compile_options(${TARGET} BEFORE PRIVATE "-fsanitize=${ENABLE_SANITIZER}")
+      target_link_options(${TARGET} BEFORE PRIVATE "-fsanitize=${ENABLE_SANITIZER}")
+    endif()
   endfunction(__target_sanitize)
 
   if (ENABLE_GPROF)
@@ -60,12 +59,20 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /permissive-")
   else ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${clang_cxx_warnings} ${clang_cxx_warn_error} ${clang_cxx_nowarn}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${gnu_debug}")
+    set(CMAKE_CXX_FLAGS_RELEASE "${gnu_release}" CACHE STRING "" FORCE)
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${gnu_rwdi}" CACHE STRING "" FORCE)
   endif ()
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${gnu_cxx_warnings} ${gnu_cxx_warn_error}")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${gnu_debug}")
+  set(CMAKE_CXX_FLAGS_RELEASE "${gnu_release}" CACHE STRING "" FORCE)
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${gnu_rwdi}" CACHE STRING "" FORCE)
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D_DEBUG /MDd /Zi /D_ITERATOR_DEBUG_LEVEL=0 /GL")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD /GL")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /permissive-")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${msvc_debug}")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${msvc_release}")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${msvc_rwdi}" CACHE STRING "" FORCE)
 
   set(all_linker_flags "/LTCG")
 
@@ -78,12 +85,10 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "")
   set(CMAKE_STATIC_LINKER_FLAGS_DEBUG "")
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG")
-
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /permissive-")
 endif ()
 
 
-function(FlagPostSetup)
+function(SetupPost)
   # Pretty annoying after a decade+ cmake still can't indirectly
   # call functions
   function(ProcessDir DIR)
@@ -96,15 +101,15 @@ function(FlagPostSetup)
     endforeach()
   endfunction()
 
-  function(MapDirs FUN DIR)
+  function(MapDirs DIR)
     ProcessDir(${DIR})
     get_property(subdirs DIRECTORY ${DIR} PROPERTY SUBDIRECTORIES)
     foreach(dir ${subdirs})
-      MapDirs(${FUN} ${dir})
+      MapDirs(${dir})
     endforeach()
   endfunction()
 
-  MapDirs(message .)
+  MapDirs(${CMAKE_CURRENT_SOURCE_DIR})
 
   message("**   C++ flags: ${CMAKE_CXX_FLAGS}")
   message("**   C++ debug    flags: ${CMAKE_CXX_FLAGS_DEBUG}")
@@ -114,4 +119,6 @@ function(FlagPostSetup)
   message("**   Link debug flags: ${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
   message("**")
   message("**   This build: ${CMAKE_BUILD_TYPE}")
-endfunction(FlagPostSetup)
+endfunction(SetupPost)
+
+include(cxx_features)

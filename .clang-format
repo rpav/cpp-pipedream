@@ -1,5 +1,4 @@
 ---
-Language:        Cpp
 AccessModifierOffset: -4
 AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveAssignments: true
@@ -9,17 +8,17 @@ AlignOperands:   true
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: false
-AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
-AlwaysBreakTemplateDeclarations: true
+AlwaysBreakTemplateDeclarations: false
 BinPackArguments: true
 BinPackParameters: false
-BraceWrapping:   
+BraceWrapping:
   AfterClass:      false
   AfterControlStatement: false
   AfterEnum:       false
@@ -40,7 +39,7 @@ BreakBeforeBraces: Custom
 BreakBeforeInheritanceComma: true
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
-ColumnLimit:     105
+ColumnLimit:     110
 CommentPragmas:  '^ IWYU pragma:'
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 4
@@ -53,6 +52,8 @@ FixNamespaceComments: true
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
 IncludeBlocks: Regroup
 IncludeCategories:
+  - Regex:           '"(prefix|precompile).h"'
+    Priority:        -9999
   - Regex:           '^<[^.]+>'
     Priority:        -30
   - Regex:           '^[<"](GL/glew|epoxy/gl.h)'
@@ -101,4 +102,3 @@ Standard:        Cpp11
 TabWidth:        8
 UseTab:          Never
 ...
-

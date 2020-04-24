@@ -43,10 +43,8 @@ c->foo();
  `this` pointers in your debugger.  `ptr<T>`, with debugging enabled,
  will cause an abort at the point you do `c->foo()`.
  */
-template<typename T>
-class ptr {
-    template<typename U>
-    friend class ptr;
+template<typename T> class ptr {
+    template<typename U> friend class ptr;
 
 public:
     using type       = T*;
@@ -63,14 +61,8 @@ protected:
         return p;
     }
 
-    inline T* ensure_ptr() const
-    {
-        return ensure_ptr(_ptr);
-    }
-    inline T* ensure_ptr()
-    {
-        return ensure_ptr(_ptr);
-    }
+    inline T* ensure_ptr() const { return ensure_ptr(_ptr); }
+    inline T* ensure_ptr() { return ensure_ptr(_ptr); }
 
 public:
     ptr() = default;             ///< Default-initialize to `nullptr`
@@ -82,63 +74,21 @@ public:
     ptr(const ptr<S>& p) : _ptr(p._ptr)
     {}
 
-    /// Return a reference.
-    T& operator*() const
-    {
-        return *ensure_ptr();
-    }
-    /// Non-const.
-    T& operator*()
-    {
-        return *ensure_ptr();
-    }
+    T& operator*() const { return *ensure_ptr(); }
+    T& operator*() { return *ensure_ptr(); }
 
-    /// Dereference.
-    T* operator->() const
-    {
-        return ensure_ptr();
-    }
+    T* operator->() const { return ensure_ptr(); }
+    T* operator->() { return ensure_ptr(); }
 
-    /// Non-const.
-    T* operator->()
-    {
-        return ensure_ptr();
-    }
+    explicit operator bool() { return _ptr != nullptr; } ///< `true` if pointer is not `nullptr`.
 
-    /// `true` if pointer is not `nullptr`.
-    operator bool()
-    {
-        return _ptr != nullptr;
-    }
+    bool is_null() { return _ptr == nullptr; } ///< Non-operator, affirmative check for `nullptr`.
 
-    /// Non-operator, affirmative check for `nullptr`.
-    bool is_null()
-    {
-        return _ptr == nullptr;
-    }
+    T* get() const { return _ptr; }
+    T* get() { return _ptr; }
 
-    /// Non-cast-operator conversion to pointer.
-    T* get() const
-    {
-        return _ptr;
-    }
-    /// Non-const
-    T* get()
-    {
-        return _ptr;
-    }
-
-    /// Cast operator to `T*`.
-    operator const T*() const
-    {
-        return _ptr;
-    }
-
-    /// Non-const
-    operator T*()
-    {
-        return _ptr;
-    }
+    operator const T*() const { return _ptr; }
+    operator T*() { return _ptr; }
 
     /// Assign from `const ptr<T>`.  `T`'s const-ness is orthogonal.
     ptr& operator=(const ptr& p)
