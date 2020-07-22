@@ -139,7 +139,7 @@ struct collect_ {
         T<typename Gd::value_type> r;
         decltype(g.next())         v;
 
-        while(v = g.next(), v) {
+        while((v = g.next())) {
             r.emplace_back(*v);
         }
 
@@ -153,8 +153,8 @@ struct collect_<std::map, Ts...> {
         typename G,
         typename Gd       = std::decay_t<G>,
         typename map_type = std::map<
-            std::tuple_element_t<0, typename Gd::value_type>,
-            std::tuple_element_t<1, typename Gd::value_type>,
+            std::remove_reference_t<std::tuple_element_t<0, typename Gd::value_type>>,
+            std::remove_reference_t<std::tuple_element_t<1, typename Gd::value_type>>,
             Ts...>>
     inline map_type process(G&& g) const
     {

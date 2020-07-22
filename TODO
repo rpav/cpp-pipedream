@@ -1,3 +1,7 @@
+# Bugs
+
+- [ ] zip handling of references from pointers vs values from (temporary) optionals; this is currently "correct" in that it works as advertised, but *should* pass refs through were possible .. need a ref_or_value utility here.  Note collect for std::map is now fixed in prep for this.
+
 # Needing added
 
 - [ ] coroutine support?

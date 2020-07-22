@@ -41,6 +41,22 @@ TEST_CASE("piped_each_iter", "[piped][each]")
     REQUIRE(b == e);
 }
 
+TEST_CASE("piped_each_modify", "[piped][each][zip]")
+{
+    std::vector<int> v;
+    v.resize(5);
+
+    for(auto&& [i, x] : zip(v | each, from(0))) {
+        x = i;
+    }
+
+    REQUIRE(v[0] == 0);
+    REQUIRE(v[1] == 1);
+    REQUIRE(v[2] == 2);
+    REQUIRE(v[3] == 3);
+    REQUIRE(v[4] == 4);
+}
+
 TEST_CASE("piped_seq_basic", "[piped][seq]")
 {
     auto g = from_to(2, 5);
